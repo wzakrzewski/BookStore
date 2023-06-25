@@ -1,0 +1,83 @@
+
+
+CREATE TABLE `kategorie` (
+ `id` mediumint NOT NULL AUTO_INCREMENT,
+ `nazwa` varchar(40) NOT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `ksiazki` (
+ `id` int NOT NULL AUTO_INCREMENT,
+ `nazwa` varchar(100) NOT NULL,
+ `wydawnictwo` varchar(50) NOT NULL,
+ `cena` float NOT NULL DEFAULT '0',
+ `kategoria_id` mediumint DEFAULT NULL,
+ PRIMARY KEY (`id`),
+ KEY `kategoria_id` (`kategoria_id`),
+ CONSTRAINT `ksiazki_ibfk_1` FOREIGN KEY (`kategoria_id`) REFERENCES `kategorie` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `users` (
+ `username` varchar(25) NOT NULL,
+ `password` varchar(60) NOT NULL,
+ `enabled` tinyint(1) NOT NULL DEFAULT '1',
+ PRIMARY KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `authorities` (
+ `username` varchar(50) NOT NULL,
+ `authority` varchar(50) NOT NULL,
+ UNIQUE KEY `username` (`username`,`authority`),
+ CONSTRAINT `authorities_ibfk_1` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `autorzy` (
+ `id` smallint NOT NULL AUTO_INCREMENT,
+ `imie` varchar(30) NOT NULL,
+ `nazwisko` varchar(40) NOT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+
+CREATE TABLE `autorzy_to_ksiazki` (
+ `ksiazka_id` int NOT NULL,
+ `autor_id` smallint NOT NULL,
+ PRIMARY KEY (`autor_id`,`ksiazka_id`),
+ KEY `FK_KSIAZKA` (`ksiazka_id`),
+ CONSTRAINT `FK_AUTOR` FOREIGN KEY (`autor_id`) REFERENCES `autorzy` (`id`),
+ CONSTRAINT `FK_KSIAZKA` FOREIGN KEY (`ksiazka_id`) REFERENCES `ksiazki` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `orders` (
+ `id` int NOT NULL AUTO_INCREMENT,
+ `price` float DEFAULT NULL,
+ `status` varchar(25) DEFAULT NULL,
+ `date_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+ `username` varchar(25) DEFAULT NULL,
+ PRIMARY KEY (`id`),
+ KEY `username` (`username`),
+ CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `zamowienia_to_ksiazki` (
+ `ksiazka_id` int NOT NULL,
+ `order_id` int NOT NULL,
+ PRIMARY KEY (`order_id`,`ksiazka_id`),
+ KEY `ksiazka_id` (`ksiazka_id`),
+ CONSTRAINT `FK_ORDER` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
+ CONSTRAINT `zamowienia_to_ksiazki_ibfk_1` FOREIGN KEY (`ksiazka_id`) REFERENCES `ksiazki` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
